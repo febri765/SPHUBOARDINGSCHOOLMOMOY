@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏫 BOARDING SCHOOL MOMOY</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:linear-gradient(135deg,#0f172a,#1e293b,#312e81);
+    color:white;
+}
+
+.card{
+    width:92%;
+    max-width:430px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(14px);
+    border-radius:22px;
+    padding:25px;
+    text-align:center;
+}
+
+input, select{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    margin-top:10px;
+    outline:none;
+}
+
+button{
+    width:100%;
+    margin-top:12px;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(90deg,#22c55e,#16a34a);
+    color:white;
+    cursor:pointer;
+}
+
+#hasil{margin-top:18px;display:none;}
+
+.result-box{
+    padding:18px;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,0.2);
+    background:rgba(255,255,255,0.08);
+}
+
+.glass{background:rgba(255,255,255,0.08) !important;}
+
+.lulus{background:rgba(34,197,94,0.25);border:1px solid #22c55e;}
+.kurang{background:rgba(234,179,8,0.25);border:1px solid #eab308;}
+.gagal{background:rgba(239,68,68,0.25);border:1px solid #ef4444;}
+.gold{background:rgba(250,204,21,0.25);border:1px solid #facc15;}
+
+.result-name{font-size:18px;font-weight:bold;}
+.result-nilai{font-size:60px;font-weight:bold;margin:10px 0;}
+.result-text{font-size:14px;opacity:0.9;}
+.badge{
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.15);
+    font-size:12px;
+    margin-bottom:10px;
+}
+
+.himbauan{
+    font-size:11px;
+    opacity:0.7;
+    margin-top:4px;
+    letter-spacing:1px;
+}
+
+.shake{animation:shake 0.4s;}
+@keyframes shake{
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-5px);}
+    50%{transform:translateX(5px);}
+    75%{transform:translateX(-5px);}
+    100%{transform:translateX(0);}
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>🏫 BOARDING SCHOOL MOMOY</h2>
+    <p>📊 Sistem Pengumuman Hasil Ujian</p>
+
+    <input id="nama" placeholder="Masukkan Nama">
+
+    <!-- 📢 HIMBAUAN -->
+    <div class="himbauan">
+        ⚠ NAMA HARUS HURUF BESAR SEMUA
+    </div>
+
+    <!-- 🏫 PILIH JENJANG -->
+    <select id="jenjang">
+        <option value="">-- PILIH JENJANG --</option>
+        <option value="TK">TK</option>
+        <option value="SD">SD</option>
+        <option value="SMP">SMP</option>
+        <option value="SMA">SMA</option>
+        <option value="SMK">SMK</option>
+    </select>
+
+    <button onclick="cek()">Lihat Hasil 🚀</button>
+
+    <div id="hasil"></div>
+
+</div>
+
+<script>
+
+function cek(){
+    let nama = document.getElementById("nama").value.trim();
+    let jenjang = document.getElementById("jenjang").value;
+    let hasil = document.getElementById("hasil");
+
+    if(!nama){
+        alert("Isi nama dulu 😆");
+        return;
+    }
+
+    if(!jenjang){
+        alert("Pilih jenjang dulu 🏫");
+        return;
+    }
+
+    // ❗ wajib HURUF BESAR
+    if(nama !== nama.toUpperCase()){
+        alert("NAMA HARUS HURUF BESAR SEMUA 😡");
+        return;
+    }
+
+    hasil.style.display="block";
+
+    let special = ["IPUS","TAYO","FEBRI"];
+    let finalNilai;
+
+    if(special.includes(nama)){
+        finalNilai = 97 + Math.floor(Math.random()*4);
+    }else{
+        finalNilai = Math.floor(Math.random()*101);
+    }
+
+    let current = 0;
+
+    hasil.innerHTML = `
+        <div class="result-box glass">
+            <div class="badge">⏳ PROSES NILAI ${jenjang}</div>
+            <div class="result-name">${nama}</div>
+            <div class="result-text">⚠ Wajib huruf besar semua</div>
+            <div class="result-nilai" id="angka">0</div>
+            <div class="result-text">😂 Server Momoy lagi mikir keras...</div>
+        </div>
+    `;
+
+    let angka = document.getElementById("angka");
+
+    let interval = setInterval(()=>{
+
+        current = Math.floor(Math.random()*101);
+        angka.innerText = current;
+
+        if(current === finalNilai){
+            clearInterval(interval);
+            showResult(finalNilai, nama, jenjang);
+        }
+
+    }, 35);
+}
+
+function showResult(nilai, nama, jenjang){
+
+    let hasil = document.getElementById("hasil");
+
+    let predikat="", kelas="", emoji="", badge="", status="", kata="";
+
+    if(nilai>=95){
+        predikat="Istimewa";
+        kelas="gold";
+        emoji="🏆";
+        status="LULUS";
+        badge="👑 VIP MOMOY";
+        kata="Kamu ini bukan siswa biasa, tapi admin cheat 😭";
+        confetti({particleCount:200, spread:120});
+    }
+    else if(nilai>=90){
+        predikat="Sangat Unggul";
+        kelas="lulus";
+        emoji="🌟";
+        status="LULUS";
+        kata="Nilai kamu bikin server sekolah hang 😆";
+        confetti({particleCount:120});
+    }
+    else if(nilai>=80){
+        predikat="Baik Sekali";
+        kelas="lulus";
+        emoji="👍";
+        status="LULUS";
+        kata="Belajar santai tapi hasilnya sadis 😎";
+    }
+    else if(nilai>=75){
+        predikat="Baik";
+        kelas="kurang";
+        emoji="📚";
+        status="LULUS";
+        kata="Hampir jadi legenda sekolah 🤣";
+    }
+    else if(nilai>=70){
+        predikat="Cukup";
+        kelas="kurang";
+        emoji="⚠️";
+        status="PERLU PEMBINAAN";
+        kata="Tenang, ini cuma fase kehidupan 😆";
+    }
+    else{
+        predikat="Perlu Pembinaan";
+        kelas="gagal";
+        emoji="❌";
+        status="TIDAK LULUS";
+        kata="Ini bukan gagal, ini tutorial ulang hidup 😭";
+        hasil.classList.add("shake");
+    }
+
+    hasil.innerHTML = `
+        <div class="result-box ${kelas}">
+
+            <div class="badge">${badge || predikat}</div>
+
+            <div class="result-name">${nama}</div>
+            <div>🏫 ${jenjang} - Momoy School</div>
+
+            <div class="result-nilai">${nilai}</div>
+
+            <div class="result-text">📊 Predikat: <b>${predikat}</b></div>
+            <div class="result-text">📌 Status: <b>${status}</b></div>
+
+            <div style="margin-top:10px;font-style:italic">
+                😂 ${kata}
+            </div>
+
+            <div style="font-size:26px;margin-top:10px">${emoji}</div>
+
+        </div>
+    `;
+}
+
+</script>
+
+</body>
+</html>
